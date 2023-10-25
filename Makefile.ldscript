@@ -1,0 +1,3 @@
+CPP=arm-none-eabi-gcc
+include $(OPENCM3_DIR)/mk/genlink-config.mk
+include $(OPENCM3_DIR)/mk/genlink-rules.mk
