@@ -1,3 +1,6 @@
 [submodule "libopencm3"]
 	path = libopencm3
 	url = https://github.com/libopencm3/libopencm3.git
+[submodule "umm-zig"]
+	path = umm-zig
+	url = https://github.com/ZigEmbeddedGroup/umm-zig.git
