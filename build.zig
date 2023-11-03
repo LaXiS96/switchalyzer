@@ -64,17 +64,16 @@ pub fn build(b: *std.Build) !void {
     // step when running `zig build`).
     b.installArtifact(elf);
 
-    const objcopy = b.addObjCopy(elf.getEmittedBin(), .{ .format = .bin });
-    objcopy.step.dependOn(&elf.step);
+    // const objcopy = b.addObjCopy(elf.getEmittedBin(), .{ .format = .bin });
+    // objcopy.step.dependOn(&elf.step);
 
-    const bin_install = b.addInstallBinFile(objcopy.getOutput(), "firmware.bin");
-    b.getInstallStep().dependOn(&bin_install.step);
+    // const bin_install = b.addInstallBinFile(objcopy.getOutput(), "firmware.bin");
+    // b.getInstallStep().dependOn(&bin_install.step);
 
     const flash = b.addSystemCommand(&[_][]const u8{ "openocd", "-f", "openocd.cfg", "-c", "program zig-out/bin/firmware.elf verify reset exit" });
-    // flash.step.dependOn(&elf.step);
+    flash.step.dependOn(b.getInstallStep());
 
     const flash_cmd = b.step("flash", "Flash firmware to device");
-    flash_cmd.dependOn(b.getInstallStep());
     flash_cmd.dependOn(&flash.step);
 
     // This *creates* a Run step in the build graph, to be executed when another

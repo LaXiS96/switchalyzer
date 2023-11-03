@@ -49,8 +49,12 @@ zig build flash
 
 1. Install Cortex-Debug VSCode extension (https://github.com/Marus/cortex-debug)
 1. Set `cortex-debug.armToolchainPath` in VSCode `settings.json` to the `bin` directory of your `arm-none-eabi` toolchain
-1. Set `cortex-debug.JLinkGDBServerPath` to `JLinkGDBServerCL.exe`, and/or set `cortex-debug.openocdPath` to `openocd.exe`
-1. Launch the included debug configuration
+1. Set `cortex-debug.openocdPath` to `openocd.exe`
+1. Launch the included debug configuration(s)
+
+SWO/SWV is used for trace output, OpenOCD and Cortex-Debug will automatically configure the needed on-chip registers (TPIU, ITM, DBGMCU) to enable SWO output.
+
+TODO try DWT and ETM tracing
 
 ## References
 

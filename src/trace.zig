@@ -1,31 +1,36 @@
 const std = @import("std");
 const cm3 = @import("cm3.zig");
 
-pub fn init(cpu_clock: u32, trace_clock: u32) void {
-    cm3.DBGMCU_CR_ptr.* |= cm3.DBGMCU_CR_TRACE_IOEN | cm3.DBGMCU_CR_TRACE_MODE_ASYNC; // STM32: enable trace pins for SWO
-    cm3.SCS_DEMCR_ptr.* |= cm3.SCS_DEMCR_TRCENA; // Enable ITM and DWT
-    cm3.TPIU_SPPR_ptr.* = cm3.TPIU_SPPR_ASYNC_NRZ; // Use SWO in NRZ (UART) mode
-    cm3.TPIU_ACPR_ptr.* = cpu_clock / trace_clock - 1;
-    cm3.TPIU_FFCR_ptr.* &= ~@as(u32, cm3.TPIU_FFCR_ENFCONT); // Disable formatter (discards ETM data)
-    cm3.ITM_LAR_ptr.* = 0xc5acce55; // Unlock ITM control register
-    cm3.ITM_TCR_ptr.* &= ~@as(u32, cm3.ITM_TCR_TRACE_BUS_ID_MASK); // Set TraceBusID to 0
-    cm3.ITM_TCR_ptr.* |= cm3.ITM_TCR_ITMENA; // Enable ITM
-    cm3.ITM_TER_ptr[0] = 0xffffffff; // Enable first 32 stimulus ports
-}
-
 pub fn allocPrint(allocator: std.mem.Allocator, comptime fmt: []const u8, args: anytype) void {
+    if (!isStimEnabled(0))
+        return;
+
     const slice = std.fmt.allocPrint(allocator, fmt, args) catch return;
     defer allocator.free(slice);
-    for (slice) |c| putChar(c);
+    for (slice) |c|
+        send8_blocking(0, c);
 }
 
 pub fn bufPrint(comptime fmt: []const u8, args: anytype) void {
+    if (!isStimEnabled(0))
+        return;
+
     var buf: [256]u8 = undefined;
     const slice = std.fmt.bufPrint(&buf, fmt, args) catch return;
-    for (slice) |c| putChar(c);
+    for (slice) |c|
+        send8_blocking(0, c);
 }
 
-fn putChar(c: u8) void {
-    while (cm3.ITM_STIM8_ptr(0).* & cm3.ITM_STIM_FIFOREADY != 1) {}
-    cm3.ITM_STIM8_ptr(0).* = c;
+inline fn isStimEnabled(stim_port: u8) bool {
+    const ter = stim_port / 32;
+    const port: u5 = @truncate(stim_port % 32);
+    return cm3.ITM_TER_ptr[ter] & (@as(u32, 1) << port) != 0;
+}
+
+fn send8_blocking(stim_port: u8, c: u8) void {
+    if (!isStimEnabled(stim_port))
+        return;
+
+    while (cm3.ITM_STIM8_ptr(stim_port).* & cm3.ITM_STIM_FIFOREADY == 0) {}
+    cm3.ITM_STIM8_ptr(stim_port).* = c;
 }

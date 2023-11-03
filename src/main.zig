@@ -16,8 +16,6 @@ export fn main() void {
     cm3.rcc_periph_clock_enable(cm3.RCC_GPIOC);
     cm3.gpio_set_mode(cm3.GPIOC, cm3.GPIO_MODE_OUTPUT_2_MHZ, cm3.GPIO_CNF_OUTPUT_OPENDRAIN, cm3.GPIO13);
 
-    trace.init(72000000, 2000000);
-
     cm3.systick_set_clocksource(cm3.STK_CSR_CLKSOURCE_AHB_DIV8);
     cm3.systick_set_reload(8999);
     cm3.systick_interrupt_enable();
