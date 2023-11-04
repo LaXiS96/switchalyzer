@@ -13,6 +13,7 @@
             "runToEntryPoint": "main",
             "servertype": "openocd",
             "device": "STM32F103C8",
+            "deviceName": "STM32F103C8",
             "configFiles": [
                 "./openocd.cfg"
             ],
@@ -38,6 +39,7 @@
             "type": "cortex-debug",
             "servertype": "openocd",
             "device": "STM32F103C8",
+            "deviceName": "STM32F103C8",
             "configFiles": [
                 "./openocd.cfg"
             ],

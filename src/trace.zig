@@ -21,16 +21,24 @@ pub fn bufPrint(comptime fmt: []const u8, args: anytype) void {
         send8_blocking(0, c);
 }
 
+pub fn write(str: []const u8) void {
+    if (!isStimEnabled(0))
+        return;
+
+    for (str) |c|
+        send8_blocking(0, c);
+}
+
 inline fn isStimEnabled(stim_port: u8) bool {
     const ter = stim_port / 32;
     const port: u5 = @truncate(stim_port % 32);
-    return cm3.ITM_TER_ptr[ter] & (@as(u32, 1) << port) != 0;
+    return cm3.ITM_TER_mmio[ter] & (@as(u32, 1) << port) != 0;
 }
 
 fn send8_blocking(stim_port: u8, c: u8) void {
     if (!isStimEnabled(stim_port))
         return;
 
-    while (cm3.ITM_STIM8_ptr(stim_port).* & cm3.ITM_STIM_FIFOREADY == 0) {}
-    cm3.ITM_STIM8_ptr(stim_port).* = c;
+    while (cm3.ITM_STIM8_mmio(stim_port).* & cm3.ITM_STIM_FIFOREADY == 0) {}
+    cm3.ITM_STIM8_mmio(stim_port).* = c;
 }
