@@ -1,5 +1,5 @@
 const std = @import("std");
-const cm3 = @import("cm3.zig");
+const hal = @import("stm32f1.zig");
 
 pub fn allocPrint(allocator: std.mem.Allocator, comptime fmt: []const u8, args: anytype) void {
     if (!isStimEnabled(0))
@@ -32,13 +32,13 @@ pub fn write(str: []const u8) void {
 inline fn isStimEnabled(stim_port: u8) bool {
     const ter = stim_port / 32;
     const port: u5 = @truncate(stim_port % 32);
-    return cm3.ITM_TER_mmio[ter] & (@as(u32, 1) << port) != 0;
+    return hal.Itm.TER[ter] & (@as(u32, 1) << port) != 0;
 }
 
 fn send8_blocking(stim_port: u8, c: u8) void {
     if (!isStimEnabled(stim_port))
         return;
 
-    while (cm3.ITM_STIM8_mmio(stim_port).* & cm3.ITM_STIM_FIFOREADY == 0) {}
-    cm3.ITM_STIM8_mmio(stim_port).* = c;
+    while (hal.Itm.STIM8(stim_port).* & hal.Itm.STIM_FIFOREADY == 0) {}
+    hal.Itm.STIM8(stim_port).* = c;
 }

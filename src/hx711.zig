@@ -11,20 +11,20 @@
 // white -> A-
 // green -> A+
 
-const Gpio = @import("gpio.zig");
-const cm3 = @import("cm3.zig");
+const hal = @import("stm32f1.zig");
 const clock = @import("clock.zig");
 const trace = @import("trace.zig");
 
-var dout_gpio: Gpio = undefined;
-var pd_sclk_gpio: Gpio = undefined;
+var dout_gpio: hal.Gpio = undefined;
+var pd_sclk_gpio: hal.Gpio = undefined;
 
-pub fn init(dout: Gpio, pd_sclk: Gpio) void {
+pub fn init(dout: hal.Gpio, pd_sclk: hal.Gpio) void {
     dout_gpio = dout;
     pd_sclk_gpio = pd_sclk;
 
-    dout_gpio.setupInputFloating();
-    pd_sclk_gpio.setupOutput();
+    dout_gpio.configure(.input, .{ .input = .pull });
+    dout_gpio.set(); // Pull-up
+    pd_sclk_gpio.configure(.output_2MHz, .{ .output = .pushpull });
     pd_sclk_gpio.clear();
 }
 
