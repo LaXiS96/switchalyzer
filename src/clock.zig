@@ -1,20 +1,25 @@
-const cm3 = @import("cm3.zig");
+const std = @import("std");
+const hal = @import("stm32f1/_index.zig");
 
-var one_us_mult: u32 = 0;
+var _timer: hal.Timer = undefined;
+var _one_us_ticks: u16 = 0;
 
-pub fn init() void {
+pub fn initialize(timer: hal.Timer.Timers, clk_freq: u32) void {
+    _timer = hal.Timer.create(timer);
+    _timer.initialize();
     // TODO defaults are already: no divider, upcounting
-    cm3.timer_one_shot_mode(cm3.TIM2);
+    _timer.oneshot(true);
 
-    const freq = cm3.rcc_get_timer_clk_freq(cm3.TIM2);
-    one_us_mult = freq / 1_000_000;
+    // TODO const freq = cm3.rcc_get_timer_clk_freq(cm3.TIM2);
+    _one_us_ticks = @intCast(clk_freq / 1_000_000);
 }
 
-/// In Debug mode, small delays are not guaranteed to be accurate
+/// In Debug builds, small delays are not guaranteed to be accurate
 pub fn delay(microseconds: u16) void {
-    const period = microseconds * one_us_mult;
-    cm3.timer_set_period(cm3.TIM2, period);
-    cm3.timer_clear_flag(cm3.TIM2, cm3.TIM_SR_UIF);
-    cm3.timer_enable_counter(cm3.TIM2);
-    while (!cm3.timer_get_flag(cm3.TIM2, cm3.TIM_SR_UIF)) {}
+    const period = std.math.mul(u16, microseconds, _one_us_ticks) catch 65535;
+    _timer.setPeriod(period);
+
+    _timer.clearFlag(.UIF);
+    _timer.start();
+    while (!_timer.hasFlag(.UIF)) {}
 }
