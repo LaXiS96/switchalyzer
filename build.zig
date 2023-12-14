@@ -1,12 +1,13 @@
 const std = @import("std");
 
-const config = struct {
-    const opencm3_dir: []const u8 = "libopencm3";
-    const device: []const u8 = "stm32f103x8";
-    const family: []const u8 = "STM32F1";
-    const mcpu: []const u8 = "cortex_m3";
-    const ldscript: []const u8 = "generated.stm32f103x8.ld";
-    const libname: []const u8 = "opencm3_stm32f1";
+const config = .{
+    .opencm3_dir = "libopencm3",
+    .device = "stm32f103x8",
+    .family = "STM32F1",
+    .mcpu = "cortex_m3",
+    // .ldscript = "generated.stm32f103x8.ld",
+    .ldscript = "stm32f103x8.ld",
+    .libname = "opencm3_stm32f1",
 };
 
 // Although this function looks imperative, note that its job is to
@@ -50,11 +51,11 @@ pub fn build(b: *std.Build) !void {
 
     elf.addModule("umm", umm_zig);
 
-    elf.addIncludePath(.{ .path = config.opencm3_dir ++ "/include" });
-    elf.defineCMacro(config.family, null);
+    // elf.addIncludePath(.{ .path = config.opencm3_dir ++ "/include" });
+    // elf.defineCMacro(config.family, null);
 
-    elf.addLibraryPath(.{ .path = config.opencm3_dir ++ "/lib" });
-    elf.linkSystemLibrary(config.libname);
+    // elf.addLibraryPath(.{ .path = config.opencm3_dir ++ "/lib" });
+    // elf.linkSystemLibrary(config.libname);
 
     // elf.step.dependOn(&ldscript_gen.step);
     elf.setLinkerScript(.{ .path = config.ldscript });

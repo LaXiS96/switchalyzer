@@ -1,5 +1,5 @@
 const std = @import("std");
-const cortex = @import("cortex/_index.zig");
+const Itm = @import("itm.zig");
 
 pub fn allocPrint(allocator: std.mem.Allocator, comptime fmt: []const u8, args: anytype) void {
     if (!isStimEnabled(0))
@@ -32,13 +32,13 @@ pub fn write(str: []const u8) void {
 inline fn isStimEnabled(stim_port: u8) bool {
     const ter = stim_port / 32;
     const port: u5 = @truncate(stim_port % 32);
-    return cortex.Itm.TER[ter] & (@as(u32, 1) << port) != 0;
+    return Itm.TER[ter] & (@as(u32, 1) << port) != 0;
 }
 
 fn send8_blocking(stim_port: u8, c: u8) void {
     if (!isStimEnabled(stim_port))
         return;
 
-    while (cortex.Itm.STIM8(stim_port).* & cortex.Itm.STIM_FIFOREADY == 0) {}
-    cortex.Itm.STIM8(stim_port).* = c;
+    while (Itm.STIM8(stim_port).* & Itm.STIM_FIFOREADY == 0) {}
+    Itm.STIM8(stim_port).* = c;
 }

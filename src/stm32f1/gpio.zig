@@ -116,3 +116,7 @@ pub inline fn low(self: @This()) void {
 pub inline fn read(self: @This()) bool {
     return getRegister(self.port).IDR & (@as(u32, 1) << self.pin) != 0;
 }
+
+pub inline fn toggle(self: @This()) void {
+    _ = self;
+}

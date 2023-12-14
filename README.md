@@ -57,6 +57,10 @@ SWO/SWV is used for trace output, OpenOCD and Cortex-Debug will automatically co
 
 TODO try DWT and ETM tracing
 
+## Useful commands
+
+Dump ELF or object file contents: `arm-none-eabi-objdump.exe -dx zig-out/bin/firmware.elf | less`
+
 ## References
 
 - https://ziglang.org/documentation/master
