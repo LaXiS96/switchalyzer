@@ -1,4 +1,3 @@
 .vscode/settings.json
-generated.*.ld
 zig-cache/
 zig-out/

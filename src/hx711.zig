@@ -17,13 +17,13 @@ const clock = @import("clock.zig");
 var _dout_gpio: hal.Gpio = undefined;
 var _pd_sclk_gpio: hal.Gpio = undefined;
 
-pub fn initialize(dout: hal.Gpio, pd_sclk: hal.Gpio) void {
+pub fn initialize(dout: hal.Gpio, pd_sclk: hal.Gpio) !void {
     _dout_gpio = dout;
     _pd_sclk_gpio = pd_sclk;
 
-    _dout_gpio.initialize(.input, .{ .input = .pull });
+    try _dout_gpio.initialize(.input, .{ .input = .pull });
     _dout_gpio.high(); // Pull-up
-    _pd_sclk_gpio.initialize(.output_2MHz, .{ .output = .pushpull });
+    try _pd_sclk_gpio.initialize(.output_2MHz, .{ .output = .pushpull });
     _pd_sclk_gpio.low();
 }
 

@@ -39,6 +39,7 @@ fn send8_blocking(stim_port: u8, c: u8) void {
     if (!isStimEnabled(stim_port))
         return;
 
-    while (cortex.Itm.STIM8(stim_port).* & cortex.Itm.STIM_FIFOREADY == 0) {}
+    while (cortex.Itm.STIM8(stim_port).* & cortex.Itm.STIM_FIFOREADY == 0)
+        asm volatile ("" ::: "memory");
     cortex.Itm.STIM8(stim_port).* = c;
 }

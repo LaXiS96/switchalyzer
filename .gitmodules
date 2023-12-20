@@ -1,6 +1,3 @@
-[submodule "libopencm3"]
-	path = libopencm3
-	url = https://github.com/libopencm3/libopencm3.git
-[submodule "umm-zig"]
-	path = umm-zig
-	url = https://github.com/ZigEmbeddedGroup/umm-zig.git
+[submodule "stmicro-stm32"]
+	path = stmicro-stm32
+	url = https://github.com/LaXiS96/stmicro-stm32.git

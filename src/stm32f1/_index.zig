@@ -1,3 +1,2 @@
-pub const Gpio = @import("gpio.zig");
-pub const Rcc = @import("rcc.zig");
-pub const Timer = @import("timer.zig");
+pub const Gpio = @import("Gpio.zig");
+pub const Timer = @import("Timer.zig");
