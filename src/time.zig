@@ -21,5 +21,5 @@ pub fn delay(microseconds: u16) void {
     _timer.clearFlag(.UIF);
     _timer.start();
     while (!_timer.hasFlag(.UIF))
-        asm volatile ("" ::: "memory"); // TODO compiler bug in 0.11.0, fixed as of 0.12.0-dev.1830+779b8e259
+        asm volatile ("" ::: "memory"); // TODO needed because of compiler bug in 0.11.0, fixed as of 0.12.0-dev.1830+779b8e259
 }

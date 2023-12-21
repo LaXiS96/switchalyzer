@@ -13,6 +13,7 @@ pub fn create(timer: TimerT) @This() {
 }
 
 pub fn initialize(self: @This()) !void {
+    // TODO should reset via rcc
     const pps = mz.chip.peripherals;
     switch (self.timer) { // TODO ENR bitfields change between STM32 families (different buses architecture), this is not flexible
         // pps.TIM1 => pps.RCC.APB2ENR.modify(.{ .TIM1EN = 1 }),

@@ -12,7 +12,7 @@
 // green -> A+
 
 const hal = @import("stm32f1/_index.zig");
-const clock = @import("clock.zig");
+const time = @import("time.zig");
 
 var _dout_gpio: hal.Gpio = undefined;
 var _pd_sclk_gpio: hal.Gpio = undefined;
@@ -36,19 +36,19 @@ pub fn read() ?i24 {
 
     for (0..24) |i| {
         _pd_sclk_gpio.high();
-        clock.delay(1);
+        time.delay(1);
 
         const bit: u24 = if (_dout_gpio.read()) 1 else 0;
         value |= bit << @truncate(23 - i); // MSB first
 
         _pd_sclk_gpio.low();
-        clock.delay(1);
+        time.delay(1);
     }
 
     // Last clock to end reading
     // TODO 26 clocks select channel B with gain 32, 27 clocks select channel A with gain 64
     _pd_sclk_gpio.high();
-    clock.delay(1);
+    time.delay(1);
     _pd_sclk_gpio.low();
 
     const ivalue: i24 = @bitCast(value);
